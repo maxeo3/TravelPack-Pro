@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TravelPack Pro - Famiglia & Arya</title>
+    <title>TravelPack Pro</title>
     <style>
         :root {
             --primary: #2a9d8f; --secondary: #264653; --accent: #e9c46a;
@@ -12,41 +12,27 @@
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--secondary); -webkit-tap-highlight-color: transparent; }
         .container { max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
         .card { background: var(--white); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
         h1 { text-align: center; color: var(--primary); margin: 10px 0; font-size: 1.5rem; }
         label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; opacity: 0.8; text-transform: uppercase; }
-        
         input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--primary); }
-        
         .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn { border: none; border-radius: 8px; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-main { background: var(--primary); color: white; width: 100%; }
         .btn-save { background: var(--secondary); color: white; margin-top: 10px; width: 100%; }
-        
-        /* Progress Bar */
         .total-progress { margin: 20px 0; text-align: center; }
         .bar-outer { background: #ddd; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 5px; }
         .bar-inner { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
-        
-        /* Categorie */
         .cat-card { background: white; border-radius: 10px; margin-bottom: 10px; overflow: hidden; border: 1px solid #eee; }
-        .cat-header { 
-            background: #f8f9fa; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; 
-            cursor: pointer; border-bottom: 1px solid #eee;
-        }
+        .cat-header { background: #f8f9fa; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid #eee; }
         .cat-title { font-weight: bold; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .cat-perc { font-size: 0.75rem; background: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        
         .cat-content { display: block; }
         .cat-content.hidden { display: none; }
-        
         .item-row { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #f9f9f9; gap: 10px; }
         .item-row.checked span { text-decoration: line-through; opacity: 0.4; }
         .item-row span { flex-grow: 1; font-size: 0.95rem; }
-        .item-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); flex-shrink: 0; }
+        .item-row input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--primary); flex-shrink: 0; }
         .btn-del { color: var(--danger); background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; }
-
         .archive-area { border-top: 2px dashed #ccc; margin-top: 20px; padding-top: 20px; }
         .qty-tag { color: var(--primary); font-weight: bold; margin-right: 5px; font-size: 0.85rem; }
     </style>
@@ -56,10 +42,9 @@
 <div class="container">
     <h1>🧳 TravelPack Pro</h1>
 
-    <!-- Setup Viaggio -->
     <div class="card">
-        <label>Meta (es: Ortisei, Cervia, Praga)</label>
-        <input type="text" id="meta-name" placeholder="Dove andate?">
+        <label>Nome Viaggio / Meta</label>
+        <input type="text" id="meta-name" placeholder="Es: Capodanno, Vacanza Mare...">
         
         <div class="setup-grid">
             <div>
@@ -76,23 +61,20 @@
                 <input type="number" id="days-count" value="7" min="1">
             </div>
         </div>
-        <button class="btn btn-main" onclick="createNewTrip()">GENERA LISTA PRESET</button>
+        <button class="btn btn-main" onclick="createNewTrip()">GENERA LISTA</button>
     </div>
 
-    <!-- Progresso Totale -->
     <div class="total-progress" id="progress-area" style="display:none;">
         <span id="total-text" style="font-weight: bold;">Valigia: 0%</span>
         <div class="bar-outer"><div class="bar-inner" id="total-bar"></div></div>
     </div>
 
-    <!-- Lista Oggetti -->
     <div id="list-container"></div>
 
-    <!-- Aggiunta manuale -->
     <div class="card" id="add-item-area" style="display:none;">
         <label>Aggiungi altro</label>
         <div style="display:flex; gap:5px;">
-            <input type="text" id="new-item-name" placeholder="Es: Caricabatterie">
+            <input type="text" id="new-item-name" placeholder="Es: Ombrello">
             <select id="new-item-cat" style="width:130px">
                 <option value="Abbigliamento">Abbigliamento</option>
                 <option value="Bimbi">Bimbi</option>
@@ -103,15 +85,15 @@
             </select>
             <button class="btn btn-main" onclick="addItem()" style="width:50px">+</button>
         </div>
-        <button class="btn btn-save" onclick="saveCurrentTripToArchive()">💾 SALVA QUESTO VIAGGIO</button>
+        <div style="margin-top:10px; display:flex; gap:5px;">
+            <button class="btn btn-save" onclick="saveCurrentTripToArchive()">💾 Salva sul mio telefono</button>
+            <button class="btn btn-main" onclick="generaLinkCondividibile()">🔗 Condividi Link</button>
+        </div>
     </div>
 
-    <!-- Archivio -->
     <div class="card archive-area">
         <label>I tuoi viaggi salvati</label>
-        <select id="archive-select">
-            <option value="">-- Carica viaggio salvato --</option>
-        </select>
+        <select id="archive-select"></select>
         <div class="setup-grid">
             <button class="btn btn-save" onclick="loadTripFromArchive()">CARICA</button>
             <button class="btn btn-save" style="background:#888" onclick="deleteFromArchive()">ELIMINA</button>
@@ -120,7 +102,7 @@
 </div>
 
 <script>
-// I TUOI PRESET AGGIORNATI
+// I TUOI PRESET AGGIORNATI (Liste esatte che mi hai fornito)
 const presets = {
     inverno: {
         "Abbigliamento": ["Calze", "Mutande", "Pigiama", "Calzamaglia", "Maglione", "Magliette", "Pantaloni", "Tuta da sci", "Cappelli", "Passacollo", "Guanti", "Scarponcini"],
@@ -131,38 +113,28 @@ const presets = {
         "Altro": ["Sali", "Bite", "Snack"]
     },
     estate: {
-        "Bambini": ["Pannolini", "Pannolini acqua", "Costumini", "Poncho", "Asciugamani", "Body", "Magliette", "Braghette", "Due cambi lunghi", "Cappelli", "Occhiali sole", "Giochi spiaggia", "Ciabattine", "Sandalini", "Bavaglini", "Salviette", "Creme corpo", "Bagnoschiuma", "Intimo", "Shampoo", "Aloe", "Crema culetto", "Tachipirina", "Termometro", "Fisiologica", "Siringa", "Cerotti", "Citrosil", "Mussole"],
-        "Igiene e Cura": ["Shampoo", "Bagnoschiuma", "Pettine spazzola", "Crema viso", "Crema corpo", "Trucchi", "Struccante", "Spazzolino", "Dentifricio", "Collutorio", "Filo interdentale", "Salvaslip", "Assorbente", "Fazzoletti", "Lavanaso", "Medicine", "Termometro"],
+        "Bimbi": ["Pannolini", "Pannolini acqua", "Costumini", "Poncho", "Asciugamani", "Body", "Magliette", "Braghette", "Due cambi lunghi", "Cappelli", "Occhiali sole", "Giochi spiaggia", "Ciabattine", "Sandalini", "Bavaglini", "Salviette", "Creme corpo", "Bagnoschiuma", "Intimo", "Shampoo", "Aloe", "Crema culetto", "Tachipirina", "Termometro", "Fisiologica", "Siringa", "Cerotti", "Citrosil", "Mussole"],
         "Genitori": ["Costumi", "Teli mare", "Mutande", "Calze", "Vestiti corti", "Vestiti lunghi", "Vestiti spiaggia", "Felpa", "Ciabatte", "Cappelli", "Creme solari", "Crema corpo", "Spazzolino", "Dentifricio", "Salone intimo", "Bagnoschiuma", "Shampoo", "Scarpe/sandali", "Tachipirina", "Brufen", "Spazzola", "Pettine", "Burro cacao", "Trucchi", "Struccante", "Forbicine", "Pinzette", "Rasoio", "Fazzoletti", "Borracce", "Byte", "Rumori bianchi", "Lucina", "Antizanzare", "Marsupio per Gabri", "Sapone", "Zaino spiaggia"]
-    }
+    },
+    primavera: { "Generale": ["Giacca leggera", "Scarpe comode", "Ombrello"], "Igiene": ["Spazzolino", "Dentifricio"] },
+    autunno: { "Generale": ["Giacca pioggia", "Scarpe pesanti", "Sciarpa"], "Igiene": ["Spazzolino", "Dentifricio"] }
 };
 
-// Oggetti che scalano con i giorni di viaggio
-const scalableItems = ["Mutande", "Calze", "Body", "Pannolini", "Pigiama", "Cibo", "Fruttini", "Crackers", "Magliette", "Braghette", "Bavaglini", "Cambi", "Vestiti", "Salviette"];
+const scalableItems = ["Mutande", "Calze", "Body", "Pannolini", "Pigiama", "Cibo", "Fruttini", "Crackers", "Magliette", "Bavaglini", "Cambi", "Vestiti"];
 
 let activeTrip = { name: "", season: "", days: 1, categories: {}, collapsed: {} };
 
 function createNewTrip() {
     const season = document.getElementById('season').value;
     const days = parseInt(document.getElementById('days-count').value);
-    const meta = document.getElementById('meta-name').value || "Nuovo Viaggio";
+    const meta = document.getElementById('meta-name').value || "Mio Viaggio";
+    let template = presets[season];
     
-    // Carica il preset corrispondente o una lista vuota per Primavera/Autunno
-    let template = presets[season] || { "Generale": ["Vestiti", "Documenti", "Spazzolino"] };
-    
-    activeTrip = {
-        name: meta,
-        season: season,
-        days: days,
-        categories: {},
-        collapsed: {}
-    };
-
+    activeTrip = { name: meta, season: season, days: days, categories: {}, collapsed: {} };
     for (let cat in template) {
         activeTrip.categories[cat] = template[cat].map(item => ({ name: item, checked: false }));
         activeTrip.collapsed[cat] = false;
     }
-
     document.getElementById('progress-area').style.display = 'block';
     document.getElementById('add-item-area').style.display = 'block';
     render();
@@ -172,15 +144,12 @@ function render() {
     const container = document.getElementById('list-container');
     container.innerHTML = '';
     let total = 0, checked = 0;
-
     for (let cat in activeTrip.categories) {
         const items = activeTrip.categories[cat];
         const isCol = activeTrip.collapsed[cat];
         const catDone = items.filter(i => i.checked).length;
         const catPerc = items.length === 0 ? 0 : Math.round((catDone / items.length) * 100);
-        
-        total += items.length;
-        checked += catDone;
+        total += items.length; checked += catDone;
 
         const catDiv = document.createElement('div');
         catDiv.className = 'cat-card';
@@ -197,39 +166,23 @@ function render() {
                         <button class="btn-del" onclick="deleteItem('${cat}', ${idx})">×</button>
                     </div>
                 `).join('')}
-            </div>
-        `;
+            </div>`;
         container.appendChild(catDiv);
     }
-
     const totalPerc = total === 0 ? 0 : Math.round((checked / total) * 100);
-    document.getElementById('total-text').innerText = `${activeTrip.name} - Valigia: ${totalPerc}%`;
+    document.getElementById('total-text').innerText = `${activeTrip.name} - ${totalPerc}%`;
     document.getElementById('total-bar').style.width = totalPerc + '%';
     updateArchiveList();
 }
 
 function getQty(name) {
-    if (scalableItems.some(s => name.toLowerCase().includes(s.toLowerCase()))) {
-        return `<span class="qty-tag">x${activeTrip.days}</span>`;
-    }
+    if (scalableItems.some(s => name.toLowerCase().includes(s.toLowerCase()))) return `<span class="qty-tag">x${activeTrip.days}</span>`;
     return "";
 }
 
-function toggleItem(cat, idx) {
-    activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
-    render();
-}
-
-function toggleCollapse(cat) {
-    activeTrip.collapsed[cat] = !activeTrip.collapsed[cat];
-    render();
-}
-
-function deleteItem(cat, idx) {
-    activeTrip.categories[cat].splice(idx, 1);
-    render();
-}
-
+function toggleItem(cat, idx) { activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked; render(); }
+function toggleCollapse(cat) { activeTrip.collapsed[cat] = !activeTrip.collapsed[cat]; render(); }
+function deleteItem(cat, idx) { activeTrip.categories[cat].splice(idx, 1); render(); }
 function addItem() {
     const name = document.getElementById('new-item-name').value;
     const cat = document.getElementById('new-item-cat').value;
@@ -240,21 +193,16 @@ function addItem() {
     render();
 }
 
-// ARCHIVIO
+// --- FUNZIONI ARCHIVIO LOCALE ---
 function saveCurrentTripToArchive() {
-    const archive = JSON.parse(localStorage.getItem('travel_pack_archive') || '{}');
-    const saveName = prompt("Salva con nome:", activeTrip.name + " (" + activeTrip.season + ")");
-    if (saveName) {
-        archive[saveName] = activeTrip;
-        localStorage.setItem('travel_pack_archive', JSON.stringify(archive));
-        alert("Salvato correttamente!");
-        updateArchiveList();
-    }
+    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
+    const saveName = prompt("Salva con nome:", activeTrip.name);
+    if (saveName) { archive[saveName] = activeTrip; localStorage.setItem('tp_arch', JSON.stringify(archive)); updateArchiveList(); }
 }
 
 function loadTripFromArchive() {
     const name = document.getElementById('archive-select').value;
-    const archive = JSON.parse(localStorage.getItem('travel_pack_archive') || '{}');
+    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
     if (name && archive[name]) {
         activeTrip = archive[name];
         document.getElementById('meta-name').value = activeTrip.name;
@@ -268,29 +216,76 @@ function loadTripFromArchive() {
 
 function deleteFromArchive() {
     const name = document.getElementById('archive-select').value;
-    if (name && confirm("Eliminare permanentemente questo viaggio?")) {
-        const archive = JSON.parse(localStorage.getItem('travel_pack_archive') || '{}');
-        delete archive[name];
-        localStorage.setItem('travel_pack_archive', JSON.stringify(archive));
+    if (name && confirm("Eliminare permanentemente?")) {
+        const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
+        delete archive[name]; localStorage.setItem('tp_arch', JSON.stringify(archive));
         updateArchiveList();
     }
 }
 
 function updateArchiveList() {
-    const archive = JSON.parse(localStorage.getItem('travel_pack_archive') || '{}');
+    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
     const select = document.getElementById('archive-select');
-    const currentVal = select.value;
-    select.innerHTML = '<option value="">-- Carica viaggio salvato --</option>';
+    select.innerHTML = '<option value="">-- Seleziona --</option>';
     for (let name in archive) {
         const opt = document.createElement('option');
-        opt.value = name;
-        opt.innerText = name;
-        select.appendChild(opt);
+        opt.value = name; opt.innerText = name; select.appendChild(opt);
     }
-    select.value = currentVal;
 }
 
-updateArchiveList();
+// --- FUNZIONE CONDIVIDI LINK ---
+function generaLinkCondividibile() {
+    const jsonData = JSON.stringify(activeTrip);
+    const base64Data = btoa(jsonData);
+    const urlCorrente = new URL(window.location);
+    urlCorrente.searchParams.set('tp', base64Data);
+    const linkFinale = urlCorrente.toString();
+    
+    navigator.clipboard.writeText(linkFinale).then(() => {
+        alert("Link copiato negli appunti!\nIncolla su WhatsApp\Telegram.\n\n" + linkFinale);
+    }).catch(() => {
+        alert("Link generato: " + linkFinale);
+    });
+}
+
+// --- FUNZIONE CARICA DA LINK ---
+function caricaDaLink() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codiceViaggio = urlParams.get('tp');
+    
+    if (codiceViaggio) {
+        try {
+            const jsonStr = atob(codiceViaggio);
+            activeTrip = JSON.parse(jsonStr);
+            
+            document.getElementById('meta-name').value = activeTrip.name;
+            document.getElementById('days-count').value = activeTrip.days;
+            document.getElementById('season').value = activeTrip.season;
+            
+            showApp();
+            render();
+            
+        } catch (e) {
+            console.error("Errore nel decodificare il link", e);
+            alert("Il link non è valido.");
+        }
+    }
+}
+
+function showApp() {
+    document.getElementById('progress-area').style.display = 'block';
+    document.getElementById('add-item-area').style.display = 'block';
+}
+
+// Inizializzazione: Prima controllo il link, poi l'archivio
+window.onload = function() {
+    caricaDaLink();
+    // Se non c'è un link fresco, mostriamo l'elenco archivio per eventuale ricarica
+    // Aggiorniamo la lista archivio ma non carichiamo automaticamente un vecchio viaggio 
+    // per evitare di sovrascrivere il link appena caricato, 
+    // ma lasciamo che l'utente prema il tasto "CARICA" se vuole.
+    updateArchiveList(); 
+};
 </script>
 
 </body>
