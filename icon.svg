@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Sfondo Turchese -->
+  <rect width="512" height="512" fill="#2a9d8f" rx="50"/>
+  <!-- Corpo Valigia Bianco -->
+  <rect x="50" y="150" width="412" height="212" fill="white" rx="20"/>
+  <!-- Interno della Valigia -->
+  <rect x="100" y="200" width="312" height="112" fill="#f0f2f5" rx="10"/>
+  <!-- Spunta di conferma (Verde scuro) -->
+  <path d="M150 250 L220 320 L360 180" stroke="#264653" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Maniglia -->
+  <rect x="200" y="50" width="112" height="50" fill="white" rx="10"/>
+  <rect x="220" y="70" width="72" height="10" fill="#2a9d8f"/>
+</svg>
