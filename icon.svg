@@ -1,13 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Sfondo Turchese -->
-  <rect width="512" height="512" fill="#2a9d8f" rx="50"/>
-  <!-- Corpo Valigia Bianco -->
-  <rect x="50" y="150" width="412" height="212" fill="white" rx="20"/>
-  <!-- Interno della Valigia -->
-  <rect x="100" y="200" width="312" height="112" fill="#f0f2f5" rx="10"/>
-  <!-- Spunta di conferma (Verde scuro) -->
-  <path d="M150 250 L220 320 L360 180" stroke="#264653" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Maniglia -->
-  <rect x="200" y="50" width="112" height="50" fill="white" rx="10"/>
-  <rect x="220" y="70" width="72" height="10" fill="#2a9d8f"/>
+  <defs>
+    <!-- Sfondo gradiente scuro -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A3A4B"/>
+      <stop offset="100%" stop-color="#0A1820"/>
+    </linearGradient>
+
+    <!-- Gradiente Oro/Sabbia per i dettagli -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4D35E"/>
+      <stop offset="100%" stop-color="#EE9B00"/>
+    </linearGradient>
+
+    <!-- Gradiente Verde Ottanio per lo Zaino -->
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3AADA0"/>
+      <stop offset="100%" stop-color="#227067"/>
+    </linearGradient>
+
+    <!-- Ombra morbida -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Sfondo Icona (Rounded App Icon) -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+
+  <!-- Cerchio di luce di sfondo -->
+  <circle cx="256" cy="256" r="170" fill="#2A9D8F" opacity="0.12"/>
+
+  <!-- Gruppo Zaino con ombra -->
+  <g filter="url(#shadow)">
+    <!-- Maniglia Zaino -->
+    <path d="M 216 120 C 216 85, 296 85, 296 120" fill="none" stroke="url(#goldGrad)" stroke-width="16" stroke-linecap="round"/>
+
+    <!-- Corpo Principale Zaino -->
+    <path d="M 155 180 C 155 120, 357 120, 357 180 L 372 370 C 372 400, 348 420, 318 420 L 194 420 C 164 420, 140 400, 140 370 Z" fill="url(#tealGrad)"/>
+
+    <!-- Tasca Anteriore -->
+    <path d="M 170 270 C 170 250, 342 250, 342 270 L 342 380 C 342 398, 328 408, 310 408 L 202 408 C 184 408, 170 398, 170 380 Z" fill="#19534C"/>
+
+    <!-- Cerniera / Dettaglio Oro -->
+    <line x1="170" y1="270" x2="342" y2="270" stroke="url(#goldGrad)" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Dettaglio Fibbie Verticali -->
+    <rect x="210" y="160" width="14" height="90" rx="7" fill="url(#goldGrad)"/>
+    <rect x="288" y="160" width="14" height="90" rx="7" fill="url(#goldGrad)"/>
+
+    <!-- Badge Spunta / Check in basso a destra -->
+    <circle cx="345" cy="345" r="44" fill="url(#goldGrad)"/>
+    <path d="M 323 345 L 338 360 L 368 330" stroke="#0A1820" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
 </svg>
