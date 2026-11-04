@@ -298,6 +298,22 @@ window.onload = function() {
     updateArchiveList(); 
 };
 </script>
+<script>
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Impedisce al browser di mostrare il prompt automatico
+    e.preventDefault();
+    deferredPrompt = e;
+    // Qui potresti mostrare un tuo bottone personalizzato "Installa App"
+    console.log('App installabile!');
+  });
 
+  // Se vuoi forzare l'installazione su un tasto specifico:
+  function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+    }
+  }
+</script>
 </body>
 </html>
