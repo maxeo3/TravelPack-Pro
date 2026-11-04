@@ -11,13 +11,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TravelPack">
-    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#2a9d8f">
 
     <script>
-        // Registrazione Service Worker obbligatoria per l'installazione
+        // Registrazione Service Worker per Android Chrome
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
         }
     </script>
 
@@ -53,7 +53,6 @@
         .archive-area { border-top: 2px dashed #ccc; margin-top: 20px; padding-top: 20px; }
         .qty-tag { color: var(--primary); font-weight: bold; margin-right: 5px; font-size: 0.85rem; }
     </style>
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
@@ -120,7 +119,6 @@
 </div>
 
 <script>
-// I TUOI PRESET AGGIORNATI (Liste esatte che mi hai fornito)
 const presets = {
     inverno: {
         "Abbigliamento": ["Calze", "Mutande", "Pigiama", "Calzamaglia", "Maglione", "Magliette", "Pantaloni", "Tuta da sci", "Cappelli", "Passacollo", "Guanti", "Scarponcini"],
@@ -211,7 +209,6 @@ function addItem() {
     render();
 }
 
-// --- FUNZIONI ARCHIVIO LOCALE ---
 function saveCurrentTripToArchive() {
     const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
     const saveName = prompt("Salva con nome:", activeTrip.name);
@@ -251,7 +248,6 @@ function updateArchiveList() {
     }
 }
 
-// --- FUNZIONE CONDIVIDI LINK ---
 function generaLinkCondividibile() {
     const jsonData = JSON.stringify(activeTrip);
     const base64Data = btoa(jsonData);
@@ -260,31 +256,25 @@ function generaLinkCondividibile() {
     const linkFinale = urlCorrente.toString();
     
     navigator.clipboard.writeText(linkFinale).then(() => {
-        alert("Link copiato negli appunti!\nIncolla su WhatsApp\Telegram.\n\n" + linkFinale);
+        alert("Link copiato negli appunti!\nIncolla su WhatsApp:\n\n" + linkFinale);
     }).catch(() => {
         alert("Link generato: " + linkFinale);
     });
 }
 
-// --- FUNZIONE CARICA DA LINK ---
 function caricaDaLink() {
     const urlParams = new URLSearchParams(window.location.search);
     const codiceViaggio = urlParams.get('tp');
-    
     if (codiceViaggio) {
         try {
             const jsonStr = atob(codiceViaggio);
             activeTrip = JSON.parse(jsonStr);
-            
             document.getElementById('meta-name').value = activeTrip.name;
             document.getElementById('days-count').value = activeTrip.days;
             document.getElementById('season').value = activeTrip.season;
-            
             showApp();
             render();
-            
         } catch (e) {
-            console.error("Errore nel decodificare il link", e);
             alert("Il link non è valido.");
         }
     }
@@ -295,32 +285,10 @@ function showApp() {
     document.getElementById('add-item-area').style.display = 'block';
 }
 
-// Inizializzazione: Prima controllo il link, poi l'archivio
 window.onload = function() {
     caricaDaLink();
-    // Se non c'è un link fresco, mostriamo l'elenco archivio per eventuale ricarica
-    // Aggiorniamo la lista archivio ma non carichiamo automaticamente un vecchio viaggio 
-    // per evitare di sovrascrivere il link appena caricato, 
-    // ma lasciamo che l'utente prema il tasto "CARICA" se vuole.
     updateArchiveList(); 
 };
-</script>
-<script>
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    // Impedisce al browser di mostrare il prompt automatico
-    e.preventDefault();
-    deferredPrompt = e;
-    // Qui potresti mostrare un tuo bottone personalizzato "Installa App"
-    console.log('App installabile!');
-  });
-
-  // Se vuoi forzare l'installazione su un tasto specifico:
-  function installApp() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-    }
-  }
 </script>
 </body>
 </html>
