@@ -189,7 +189,21 @@ function sanitizeTrip(t) {
             .map(i => ({ name: String(i.name), checked: !!i.checked }));
         clean.collapsed[String(cat)] = !!(t.collapsed && t.collapsed[cat]);
     }
+    // Tutte le categorie conosciute dal viaggio (anche quelle svuotate), nell'ordine originale
+    const known = [
+        ...(Array.isArray(t.allCats) ? t.allCats : []),
+        ...Object.keys(presets[clean.season]),
+        ...Object.keys(clean.categories)
+    ].map(String);
+    clean.allCats = [...new Set(known)];
     return clean;
+}
+
+// Riordina le categorie visibili seguendo l'ordine di allCats
+function sortCategories() {
+    const sorted = {};
+    activeTrip.allCats.forEach(c => { if (activeTrip.categories[c]) sorted[c] = activeTrip.categories[c]; });
+    activeTrip.categories = sorted;
 }
 
 // ---------- Viaggio attivo ----------
@@ -200,7 +214,7 @@ function createNewTrip() {
     const meta = document.getElementById('meta-name').value.trim() || "Mio Viaggio";
     const template = presets[season];
 
-    activeTrip = { name: meta, season: season, days: days, categories: {}, collapsed: {} };
+    activeTrip = { name: meta, season: season, days: days, categories: {}, collapsed: {}, allCats: Object.keys(template) };
     for (const cat in template) {
         activeTrip.categories[cat] = template[cat].map(item => ({ name: item, checked: false }));
         activeTrip.collapsed[cat] = false;
@@ -273,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
         } else if (el.dataset.action === 'delete') {
             activeTrip.categories[cat].splice(idx, 1);
-            // Se la categoria è rimasta vuota, la tolgo dalla lista
+            // Se la categoria è rimasta vuota, la tolgo dalla lista (resta disponibile nel menu "Aggiungi altro")
             if (activeTrip.categories[cat].length === 0) {
                 delete activeTrip.categories[cat];
                 delete activeTrip.collapsed[cat];
@@ -289,12 +303,12 @@ function getQty(name) {
     return "";
 }
 
-// Il menu "Aggiungi altro" mostra le categorie della lista attuale + "Nuova categoria"
+// Il menu "Aggiungi altro" mostra tutte le categorie del viaggio (anche quelle svuotate) + "Nuova categoria"
 function updateCategorySelect() {
     const select = document.getElementById('new-item-cat');
     const previous = select.value;
     select.innerHTML = '';
-    const cats = Object.keys(activeTrip.categories);
+    const cats = activeTrip.allCats;
     cats.forEach(cat => {
         const opt = document.createElement('option');
         opt.value = cat; opt.textContent = cat;
@@ -307,29 +321,46 @@ function updateCategorySelect() {
     else if (cats.length) select.value = cats[0];
 }
 
+// Chiede il nome della nuova categoria e la aggiunge al menu. Restituisce il nome o null.
+function askNewCategory() {
+    const name = (prompt("Nome della nuova categoria:") || '').trim();
+    if (!name) return null;
+    // Se esiste già (anche con maiuscole diverse) usa quella
+    const existing = activeTrip.allCats.find(c => c.toLowerCase() === name.toLowerCase());
+    const cat = existing || name;
+    if (!existing) activeTrip.allCats.push(cat);
+    return cat;
+}
+
 function onCategoryChange() {
     const select = document.getElementById('new-item-cat');
     if (select.value !== NEW_CAT_VALUE) return;
-    const name = (prompt("Nome della nuova categoria:") || '').trim();
-    if (!name) { updateCategorySelect(); return; }
-    // Se esiste già (anche con maiuscole diverse) usa quella
-    const existing = Object.keys(activeTrip.categories).find(c => c.toLowerCase() === name.toLowerCase());
-    const cat = existing || name;
-    if (!existing) { activeTrip.categories[cat] = []; activeTrip.collapsed[cat] = false; }
-    render();
-    select.value = cat;
+    const cat = askNewCategory();
+    updateCategorySelect();
+    if (cat) select.value = cat;
+    writeJson(CURRENT_KEY, activeTrip);
 }
 
 function addItem() {
     const input = document.getElementById('new-item-name');
     const name = input.value.trim();
-    const cat = document.getElementById('new-item-cat').value;
-    if (!name || !cat || cat === NEW_CAT_VALUE) return;
-    if (!activeTrip.categories[cat]) { activeTrip.categories[cat] = []; activeTrip.collapsed[cat] = false; }
+    if (!name) return;
+    let cat = document.getElementById('new-item-cat').value;
+    // Se è selezionato "Nuova categoria" (es. quando è l'unica voce del menu) chiedo il nome adesso
+    if (!cat || cat === NEW_CAT_VALUE) {
+        cat = askNewCategory();
+        if (!cat) return;
+    }
+    if (!activeTrip.allCats.includes(cat)) activeTrip.allCats.push(cat);
+    if (!activeTrip.categories[cat]) {
+        activeTrip.categories[cat] = [];
+        sortCategories(); // la categoria ricompare al suo posto
+    }
     activeTrip.categories[cat].push({ name: name, checked: false });
     activeTrip.collapsed[cat] = false; // mostra subito l'oggetto aggiunto
     input.value = '';
     render();
+    document.getElementById('new-item-cat').value = cat;
 }
 
 // ---------- Archivio ----------
