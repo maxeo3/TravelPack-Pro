@@ -92,14 +92,8 @@
         <label>Aggiungi altro</label>
         <div style="display:flex; gap:5px;">
             <input type="text" id="new-item-name" placeholder="Es: Ombrello">
-            <select id="new-item-cat" style="width:130px">
-                <option value="Abbigliamento">Abbigliamento</option>
-                <option value="Bimbi">Bimbi</option>
-                <option value="Genitori">Genitori</option>
-                <option value="Igiene">Igiene</option>
-                <option value="Cane">Cane</option>
-                <option value="Tech">Tech</option>
-            </select>
+            <!-- Le categorie vengono riempite dal codice con quelle della lista attuale -->
+            <select id="new-item-cat" style="width:130px" onchange="onCategoryChange()"></select>
             <button class="btn btn-main" onclick="addItem()" style="width:50px">+</button>
         </div>
         <div style="margin-top:10px; display:flex; gap:5px;">
@@ -136,31 +130,104 @@ const presets = {
     autunno: { "Generale": ["Giacca pioggia", "Scarpe pesanti", "Sciarpa"], "Igiene": ["Spazzolino", "Dentifricio"] }
 };
 
-const scalableItems = ["Mutande", "Calze", "Body", "Pannolini", "Pigiama", "Cibo", "Fruttini", "Crackers", "Magliette", "Bavaglini", "Cambi", "Vestiti"];
+// Oggetti la cui quantità dipende dai giorni (nome esatto, maiuscole ignorate).
+// Si confronta il nome intero, così "Pannolini acqua" o "Due cambi lunghi" non prendono "x giorni".
+const scalableItems = ["Mutande", "Calze", "Pigiama", "Magliette", "Intimo",
+    "Pannolini", "Pannolini Balkan", "Body", "Body lunghi e corti", "Bavaglini", "Bavaglino",
+    "Vestiti corti", "Vestiti lunghi", "Cibo", "Cibo Arya", "Fruttini", "Crackers"];
+const scalableSet = new Set(scalableItems.map(s => s.toLowerCase()));
 
-let activeTrip = { name: "", season: "", days: 1, categories: {}, collapsed: {} };
+const NEW_CAT_VALUE = "__nuova__";
+const CURRENT_KEY = 'tp_current';
+const ARCHIVE_KEY = 'tp_arch';
 
+let activeTrip = null;
+
+// ---------- Utilità ----------
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function readJson(key, fallback) {
+    try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch (e) { return fallback; }
+}
+
+function writeJson(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.log('Salvataggio non riuscito:', e); }
+}
+
+// Base64 compatibile con accenti ed emoji (UTF-8), sicuro negli URL
+function encodeTrip(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = '';
+    bytes.forEach(b => bin += String.fromCharCode(b));
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeTrip(code) {
+    let b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const bin = atob(b64);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+// Controlla e ripulisce un viaggio arrivato da link o archivio
+function sanitizeTrip(t) {
+    if (!t || typeof t !== 'object' || !t.categories || typeof t.categories !== 'object') throw new Error('Formato non valido');
+    const clean = {
+        name: String(t.name || 'Mio Viaggio'),
+        season: presets[t.season] ? t.season : 'inverno',
+        days: Math.max(1, parseInt(t.days) || 1),
+        categories: {},
+        collapsed: {}
+    };
+    for (const cat in t.categories) {
+        if (!Array.isArray(t.categories[cat])) continue;
+        clean.categories[String(cat)] = t.categories[cat]
+            .filter(i => i && i.name)
+            .map(i => ({ name: String(i.name), checked: !!i.checked }));
+        clean.collapsed[String(cat)] = !!(t.collapsed && t.collapsed[cat]);
+    }
+    return clean;
+}
+
+// ---------- Viaggio attivo ----------
 function createNewTrip() {
+    if (activeTrip && hasProgress() && !confirm("Hai già una lista con oggetti spuntati. Crearne una nuova al suo posto?")) return;
     const season = document.getElementById('season').value;
-    const days = parseInt(document.getElementById('days-count').value);
-    const meta = document.getElementById('meta-name').value || "Mio Viaggio";
-    let template = presets[season];
-    
+    const days = Math.max(1, parseInt(document.getElementById('days-count').value) || 1);
+    const meta = document.getElementById('meta-name').value.trim() || "Mio Viaggio";
+    const template = presets[season];
+
     activeTrip = { name: meta, season: season, days: days, categories: {}, collapsed: {} };
-    for (let cat in template) {
+    for (const cat in template) {
         activeTrip.categories[cat] = template[cat].map(item => ({ name: item, checked: false }));
         activeTrip.collapsed[cat] = false;
     }
-    document.getElementById('progress-area').style.display = 'block';
-    document.getElementById('add-item-area').style.display = 'block';
+    showApp();
+    render();
+}
+
+function hasProgress() {
+    return Object.values(activeTrip.categories).some(items => items.some(i => i.checked));
+}
+
+function setActiveTrip(trip) {
+    activeTrip = trip;
+    document.getElementById('meta-name').value = activeTrip.name;
+    document.getElementById('days-count').value = activeTrip.days;
+    document.getElementById('season').value = activeTrip.season;
+    showApp();
     render();
 }
 
 function render() {
+    if (!activeTrip) return;
     const container = document.getElementById('list-container');
     container.innerHTML = '';
     let total = 0, checked = 0;
-    for (let cat in activeTrip.categories) {
+    for (const cat in activeTrip.categories) {
         const items = activeTrip.categories[cat];
         const isCol = activeTrip.collapsed[cat];
         const catDone = items.filter(i => i.checked).length;
@@ -169,17 +236,18 @@ function render() {
 
         const catDiv = document.createElement('div');
         catDiv.className = 'cat-card';
+        catDiv.dataset.cat = cat;
         catDiv.innerHTML = `
-            <div class="cat-header" onclick="toggleCollapse('${cat}')">
-                <div class="cat-title"><span>${isCol ? '▶' : '▼'}</span> ${cat}</div>
+            <div class="cat-header" data-action="collapse">
+                <div class="cat-title"><span>${isCol ? '▶' : '▼'}</span> ${escapeHtml(cat)}</div>
                 <div class="cat-perc">${catPerc}%</div>
             </div>
             <div class="cat-content ${isCol ? 'hidden' : ''}">
                 ${items.map((item, idx) => `
                     <div class="item-row ${item.checked ? 'checked' : ''}">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem('${cat}', ${idx})">
-                        <span>${getQty(item.name)} ${item.name}</span>
-                        <button class="btn-del" onclick="deleteItem('${cat}', ${idx})">×</button>
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} data-action="toggle" data-idx="${idx}">
+                        <span>${getQty(item.name)} ${escapeHtml(item.name)}</span>
+                        <button class="btn-del" data-action="delete" data-idx="${idx}" aria-label="Elimina">×</button>
                     </div>
                 `).join('')}
             </div>`;
@@ -188,96 +256,157 @@ function render() {
     const totalPerc = total === 0 ? 0 : Math.round((checked / total) * 100);
     document.getElementById('total-text').innerText = `${activeTrip.name} - ${totalPerc}%`;
     document.getElementById('total-bar').style.width = totalPerc + '%';
-    updateArchiveList();
+    updateCategorySelect();
+    writeJson(CURRENT_KEY, activeTrip); // salvataggio automatico
 }
 
+// Un solo gestore per tutti i click della lista (niente nomi di categoria dentro onclick)
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('list-container').addEventListener('click', e => {
+        const el = e.target.closest('[data-action]');
+        if (!el) return;
+        const cat = el.closest('.cat-card').dataset.cat;
+        const idx = parseInt(el.dataset.idx);
+        if (el.dataset.action === 'collapse') {
+            activeTrip.collapsed[cat] = !activeTrip.collapsed[cat];
+        } else if (el.dataset.action === 'toggle') {
+            activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
+        } else if (el.dataset.action === 'delete') {
+            activeTrip.categories[cat].splice(idx, 1);
+        }
+        render();
+    });
+    document.getElementById('new-item-name').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+});
+
 function getQty(name) {
-    if (scalableItems.some(s => name.toLowerCase().includes(s.toLowerCase()))) return `<span class="qty-tag">x${activeTrip.days}</span>`;
+    if (scalableSet.has(name.trim().toLowerCase())) return `<span class="qty-tag">x${activeTrip.days}</span>`;
     return "";
 }
 
-function toggleItem(cat, idx) { activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked; render(); }
-function toggleCollapse(cat) { activeTrip.collapsed[cat] = !activeTrip.collapsed[cat]; render(); }
-function deleteItem(cat, idx) { activeTrip.categories[cat].splice(idx, 1); render(); }
+// Il menu "Aggiungi altro" mostra le categorie della lista attuale + "Nuova categoria"
+function updateCategorySelect() {
+    const select = document.getElementById('new-item-cat');
+    const previous = select.value;
+    select.innerHTML = '';
+    const cats = Object.keys(activeTrip.categories);
+    cats.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat; opt.textContent = cat;
+        select.appendChild(opt);
+    });
+    const optNew = document.createElement('option');
+    optNew.value = NEW_CAT_VALUE; optNew.textContent = '➕ Nuova categoria…';
+    select.appendChild(optNew);
+    if (cats.includes(previous)) select.value = previous;
+    else if (cats.length) select.value = cats[0];
+}
+
+function onCategoryChange() {
+    const select = document.getElementById('new-item-cat');
+    if (select.value !== NEW_CAT_VALUE) return;
+    const name = (prompt("Nome della nuova categoria:") || '').trim();
+    if (!name) { updateCategorySelect(); return; }
+    // Se esiste già (anche con maiuscole diverse) usa quella
+    const existing = Object.keys(activeTrip.categories).find(c => c.toLowerCase() === name.toLowerCase());
+    const cat = existing || name;
+    if (!existing) { activeTrip.categories[cat] = []; activeTrip.collapsed[cat] = false; }
+    render();
+    select.value = cat;
+}
+
 function addItem() {
-    const name = document.getElementById('new-item-name').value;
+    const input = document.getElementById('new-item-name');
+    const name = input.value.trim();
     const cat = document.getElementById('new-item-cat').value;
-    if (!name) return;
-    if (!activeTrip.categories[cat]) activeTrip.categories[cat] = [];
+    if (!name || !cat || cat === NEW_CAT_VALUE) return;
+    if (!activeTrip.categories[cat]) { activeTrip.categories[cat] = []; activeTrip.collapsed[cat] = false; }
     activeTrip.categories[cat].push({ name: name, checked: false });
-    document.getElementById('new-item-name').value = '';
+    activeTrip.collapsed[cat] = false; // mostra subito l'oggetto aggiunto
+    input.value = '';
     render();
 }
 
+// ---------- Archivio ----------
 function saveCurrentTripToArchive() {
-    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
-    const saveName = prompt("Salva con nome:", activeTrip.name);
-    if (saveName) { archive[saveName] = activeTrip; localStorage.setItem('tp_arch', JSON.stringify(archive)); updateArchiveList(); }
+    if (!activeTrip) return;
+    const archive = readJson(ARCHIVE_KEY, {});
+    const saveName = (prompt("Salva con nome:", activeTrip.name) || '').trim();
+    if (!saveName) return;
+    if (archive[saveName] && !confirm(`Esiste già "${saveName}". Sovrascriverlo?`)) return;
+    archive[saveName] = activeTrip;
+    writeJson(ARCHIVE_KEY, archive);
+    updateArchiveList();
 }
 
 function loadTripFromArchive() {
     const name = document.getElementById('archive-select').value;
-    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
+    const archive = readJson(ARCHIVE_KEY, {});
     if (name && archive[name]) {
-        activeTrip = archive[name];
-        document.getElementById('meta-name').value = activeTrip.name;
-        document.getElementById('days-count').value = activeTrip.days;
-        document.getElementById('season').value = activeTrip.season;
-        document.getElementById('progress-area').style.display = 'block';
-        document.getElementById('add-item-area').style.display = 'block';
-        render();
+        try { setActiveTrip(sanitizeTrip(JSON.parse(JSON.stringify(archive[name])))); }
+        catch (e) { alert("Questo viaggio salvato è danneggiato."); }
     }
 }
 
 function deleteFromArchive() {
     const name = document.getElementById('archive-select').value;
     if (name && confirm("Eliminare permanentemente?")) {
-        const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
-        delete archive[name]; localStorage.setItem('tp_arch', JSON.stringify(archive));
+        const archive = readJson(ARCHIVE_KEY, {});
+        delete archive[name];
+        writeJson(ARCHIVE_KEY, archive);
         updateArchiveList();
     }
 }
 
 function updateArchiveList() {
-    const archive = JSON.parse(localStorage.getItem('tp_arch') || '{}');
+    const archive = readJson(ARCHIVE_KEY, {});
     const select = document.getElementById('archive-select');
     select.innerHTML = '<option value="">-- Seleziona --</option>';
-    for (let name in archive) {
+    for (const name in archive) {
         const opt = document.createElement('option');
-        opt.value = name; opt.innerText = name; select.appendChild(opt);
+        opt.value = name; opt.textContent = name; select.appendChild(opt);
     }
 }
 
+// ---------- Condivisione ----------
 function generaLinkCondividibile() {
-    const jsonData = JSON.stringify(activeTrip);
-    const base64Data = btoa(jsonData);
-    const urlCorrente = new URL(window.location);
-    urlCorrente.searchParams.set('tp', base64Data);
-    const linkFinale = urlCorrente.toString();
-    
+    if (!activeTrip) return;
+    const url = new URL(window.location);
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('tp', encodeTrip(activeTrip));
+    const linkFinale = url.toString();
+
+    if (navigator.share) {
+        navigator.share({ title: activeTrip.name, url: linkFinale }).catch(() => {});
+        return;
+    }
     navigator.clipboard.writeText(linkFinale).then(() => {
-        alert("Link copiato negli appunti!\nIncolla su WhatsApp:\n\n" + linkFinale);
+        alert("Link copiato negli appunti!\nIncollalo su WhatsApp.");
     }).catch(() => {
-        alert("Link generato: " + linkFinale);
+        prompt("Copia questo link:", linkFinale);
     });
 }
 
 function caricaDaLink() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const codiceViaggio = urlParams.get('tp');
-    if (codiceViaggio) {
-        try {
-            const jsonStr = atob(codiceViaggio);
-            activeTrip = JSON.parse(jsonStr);
-            document.getElementById('meta-name').value = activeTrip.name;
-            document.getElementById('days-count').value = activeTrip.days;
-            document.getElementById('season').value = activeTrip.season;
-            showApp();
-            render();
-        } catch (e) {
-            alert("Il link non è valido.");
-        }
+    const code = new URLSearchParams(window.location.search).get('tp');
+    if (!code) return false;
+    // Toglie il codice dall'indirizzo: ricaricando non si perdono le modifiche fatte dopo
+    history.replaceState(null, '', window.location.pathname);
+    let trip;
+    try {
+        trip = sanitizeTrip(decodeTrip(code));
+    } catch (e) {
+        try { trip = sanitizeTrip(JSON.parse(atob(code))); } // link creati con la versione precedente
+        catch (e2) { alert("Il link non è valido."); return false; }
     }
+    const current = readJson(CURRENT_KEY, null);
+    if (current && current.categories && Object.keys(current.categories).length &&
+        !confirm(`Aprire la lista condivisa "${trip.name}"? Quella che hai aperto ora verrà sostituita (salvala prima nell'archivio se ti serve).`)) {
+        return false;
+    }
+    setActiveTrip(trip);
+    return true;
 }
 
 function showApp() {
@@ -286,8 +415,12 @@ function showApp() {
 }
 
 window.onload = function() {
-    caricaDaLink();
-    updateArchiveList(); 
+    updateArchiveList();
+    if (caricaDaLink()) return;
+    const saved = readJson(CURRENT_KEY, null);
+    if (saved) {
+        try { setActiveTrip(sanitizeTrip(saved)); } catch (e) { /* lista salvata non valida: si riparte da zero */ }
+    }
 };
 </script>
 </body>
