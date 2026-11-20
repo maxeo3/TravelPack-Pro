@@ -27,31 +27,50 @@
             --danger: #e76f51; --bg: #f0f2f5; --white: #ffffff;
         }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--secondary); -webkit-tap-highlight-color: transparent; }
-        .container { max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
+        .container { max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
         .card { background: var(--white); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
         h1 { text-align: center; color: var(--primary); margin: 10px 0; font-size: 1.5rem; }
         label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; opacity: 0.8; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; outline: none; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; outline: none; background: white; color: var(--secondary); }
         .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { border: none; border-radius: 8px; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn { border: none; border-radius: 8px; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
         .btn-main { background: var(--primary); color: white; width: 100%; }
         .btn-save { background: var(--secondary); color: white; margin-top: 10px; width: 100%; }
+        .btn-light { background: #e9ecef; color: var(--secondary); }
         .total-progress { margin: 20px 0; text-align: center; }
         .bar-outer { background: #ddd; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 5px; }
         .bar-inner { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
+        .hide-toggle { margin-top: 10px; padding: 8px 14px; border-radius: 20px; }
         .cat-card { background: white; border-radius: 10px; margin-bottom: 10px; overflow: hidden; border: 1px solid #eee; }
         .cat-header { background: #f8f9fa; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid #eee; }
         .cat-title { font-weight: bold; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .cat-perc { font-size: 0.75rem; background: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .cat-content { display: block; }
         .cat-content.hidden { display: none; }
+        .cat-done { padding: 10px 15px; font-size: 0.85rem; opacity: 0.6; }
         .item-row { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #f9f9f9; gap: 10px; }
-        .item-row.checked span { text-decoration: line-through; opacity: 0.4; }
-        .item-row span { flex-grow: 1; font-size: 0.95rem; }
-        .item-row input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--primary); flex-shrink: 0; }
+        .item-row.checked .item-name { text-decoration: line-through; opacity: 0.4; }
+        .item-name { flex-grow: 1; font-size: 0.95rem; }
+        .item-row input[type="checkbox"] { width: 24px; height: 24px; margin: 0; accent-color: var(--primary); flex-shrink: 0; }
         .btn-del { color: var(--danger); background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; }
         .archive-area { border-top: 2px dashed #ccc; margin-top: 20px; padding-top: 20px; }
-        .qty-tag { color: var(--primary); font-weight: bold; margin-right: 5px; font-size: 0.85rem; }
+        .qty-tag { color: var(--primary); font-weight: bold; font-size: 0.85rem; cursor: pointer; padding: 2px 6px; border-radius: 6px; background: #e8f5f3; flex-shrink: 0; }
+        .qty-tag.custom { background: var(--primary); color: white; }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .chip { display: inline-flex; align-items: center; margin: 0; padding: 7px 11px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.85rem; font-weight: normal; text-transform: none; opacity: 1; cursor: pointer; user-select: none; }
+        .chip input { display: none; }
+        .chip.on { background: var(--primary); color: white; border-color: var(--primary); }
+        .pin-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin: 2px 0 4px; text-transform: none; font-weight: normal; opacity: 1; }
+        .pin-row input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); }
+        details summary { font-weight: bold; cursor: pointer; padding: 4px 0; }
+        .hint { font-size: 0.8rem; opacity: 0.7; margin: 8px 0 12px; }
+        .base-cat { font-weight: bold; font-size: 0.85rem; margin: 12px 0 4px; }
+        .base-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0 4px 10px; border-bottom: 1px solid #f3f3f3; font-size: 0.9rem; }
+        .badge { font-size: 0.7rem; background: var(--accent); padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+        .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(120px); background: var(--secondary); color: white; padding: 12px 16px; border-radius: 10px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: transform 0.25s; max-width: calc(100% - 32px); box-sizing: border-box; z-index: 10; font-size: 0.9rem; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast button { background: none; border: none; color: var(--accent); font-weight: bold; font-size: 0.9rem; cursor: pointer; padding: 0; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -62,7 +81,7 @@
     <div class="card">
         <label>Nome Viaggio / Meta</label>
         <input type="text" id="meta-name" placeholder="Es: Capodanno, Vacanza Mare...">
-        
+
         <div class="setup-grid">
             <div>
                 <label>Stagione</label>
@@ -78,12 +97,16 @@
                 <input type="number" id="days-count" value="7" min="1">
             </div>
         </div>
+        <label>Aggiungi anche</label>
+        <!-- I moduli vengono creati dal codice (Mare, Montagna, Cane...) -->
+        <div class="chips" id="module-chips"></div>
         <button class="btn btn-main" onclick="createNewTrip()">GENERA LISTA</button>
     </div>
 
     <div class="total-progress" id="progress-area" style="display:none;">
         <span id="total-text" style="font-weight: bold;">Valigia: 0%</span>
         <div class="bar-outer"><div class="bar-inner" id="total-bar"></div></div>
+        <button class="btn btn-light hide-toggle" id="hide-toggle" onclick="toggleHideChecked()">🙈 Nascondi già presi</button>
     </div>
 
     <div id="list-container"></div>
@@ -92,28 +115,57 @@
         <label>Aggiungi altro</label>
         <div style="display:flex; gap:5px;">
             <input type="text" id="new-item-name" placeholder="Es: Ombrello">
-            <!-- Le categorie vengono riempite dal codice con quelle della lista attuale -->
-            <select id="new-item-cat" style="width:130px" onchange="onCategoryChange()"></select>
-            <button class="btn btn-main" onclick="addItem()" style="width:50px">+</button>
+            <input type="number" id="new-item-qty" placeholder="Qtà" min="1" style="width:64px; flex-shrink:0;">
         </div>
+        <div style="display:flex; gap:5px;">
+            <!-- Le categorie vengono riempite dal codice con quelle della lista attuale -->
+            <select id="new-item-cat" onchange="onCategoryChange()"></select>
+            <button class="btn btn-main" onclick="addItem()" style="width:56px; flex-shrink:0; margin-bottom:10px;">+</button>
+        </div>
+        <label class="pin-row"><input type="checkbox" id="pin-item"> 📌 Ricorda anche per i prossimi viaggi</label>
         <div style="margin-top:10px; display:flex; gap:5px;">
             <button class="btn btn-save" onclick="saveCurrentTripToArchive()">💾 Salva sul mio telefono</button>
-            <button class="btn btn-main" onclick="generaLinkCondividibile()">🔗 Condividi Link</button>
+            <button class="btn btn-main" style="margin-top:10px" onclick="generaLinkCondividibile()">🔗 Condividi Link</button>
         </div>
     </div>
 
     <div class="card archive-area">
         <label>I tuoi viaggi salvati</label>
         <select id="archive-select"></select>
-        <div class="setup-grid">
+        <div class="grid-3">
             <button class="btn btn-save" onclick="loadTripFromArchive()">CARICA</button>
+            <button class="btn btn-save" onclick="duplicateFromArchive()">DUPLICA</button>
             <button class="btn btn-save" style="background:#888" onclick="deleteFromArchive()">ELIMINA</button>
         </div>
+        <div class="hint">"Duplica" crea un nuovo viaggio con la stessa lista, ma senza spunte.</div>
+    </div>
+
+    <div class="card">
+        <details id="base-lists">
+            <summary>⚙️ Modifica liste base</summary>
+            <div class="hint">Sono le liste di partenza usate da "Genera lista". Le modifiche valgono per i prossimi viaggi, non per quello aperto.</div>
+            <select id="base-list-select" onchange="renderBaseList()"></select>
+            <div id="base-list-view"></div>
+            <label style="margin-top:14px">Aggiungi a questa lista</label>
+            <input type="text" id="base-new-name" placeholder="Es: Power bank">
+            <div style="display:flex; gap:5px;">
+                <select id="base-new-cat"></select>
+                <button class="btn btn-main" onclick="addBaseItem()" style="width:56px; flex-shrink:0; margin-bottom:10px;">+</button>
+            </div>
+            <button class="btn btn-light" id="base-reset" style="width:100%" onclick="resetBaseList()">↩️ Ripristina lista originale</button>
+        </details>
     </div>
 </div>
 
+<div class="toast" id="toast"><span id="toast-text"></span><button id="toast-btn"></button></div>
+
 <script>
-const presets = {
+// ---------- Liste di partenza ----------
+const SEASONS = { inverno: "❄️ Inverno", estate: "☀️ Estate", primavera: "🌸 Primavera", autunno: "🍂 Autunno" };
+const MODULES = { mare: "🏖️ Mare", montagna: "🏔️ Montagna/Neve", citta: "🏙️ Città", cane: "🐕 Con il cane", aereo: "✈️ Aereo", auto: "🚗 Auto lunga" };
+const LIST_LABELS = { ...SEASONS, ...MODULES };
+
+const DEFAULT_LISTS = {
     inverno: {
         "Abbigliamento": ["Calze", "Mutande", "Pigiama", "Calzamaglia", "Maglione", "Magliette", "Pantaloni", "Tuta da sci", "Cappelli", "Passacollo", "Guanti", "Scarponcini"],
         "Bambini": ["Pannolini Balkan", "Salviette", "Body lunghi e corti", "Giochi", "Sacchi passeggino", "Medicine bambini", "Bavaglino", "Aerosol"],
@@ -126,8 +178,36 @@ const presets = {
         "Bimbi": ["Pannolini", "Pannolini acqua", "Costumini", "Poncho", "Asciugamani", "Body", "Magliette", "Braghette", "Due cambi lunghi", "Cappelli", "Occhiali sole", "Giochi spiaggia", "Ciabattine", "Sandalini", "Bavaglini", "Salviette", "Creme corpo", "Bagnoschiuma", "Intimo", "Shampoo", "Aloe", "Crema culetto", "Tachipirina", "Termometro", "Fisiologica", "Siringa", "Cerotti", "Citrosil", "Mussole"],
         "Genitori": ["Costumi", "Teli mare", "Mutande", "Calze", "Vestiti corti", "Vestiti lunghi", "Vestiti spiaggia", "Felpa", "Ciabatte", "Cappelli", "Creme solari", "Crema corpo", "Spazzolino", "Dentifricio", "Salone intimo", "Bagnoschiuma", "Shampoo", "Scarpe/sandali", "Tachipirina", "Brufen", "Spazzola", "Pettine", "Burro cacao", "Trucchi", "Struccante", "Forbicine", "Pinzette", "Rasoio", "Fazzoletti", "Borracce", "Byte", "Rumori bianchi", "Lucina", "Antizanzare", "Marsupio per Gabri", "Sapone", "Zaino spiaggia"]
     },
-    primavera: { "Generale": ["Giacca leggera", "Scarpe comode", "Ombrello"], "Igiene": ["Spazzolino", "Dentifricio"] },
-    autunno: { "Generale": ["Giacca pioggia", "Scarpe pesanti", "Sciarpa"], "Igiene": ["Spazzolino", "Dentifricio"] }
+    primavera: {
+        "Abbigliamento": ["Calze", "Mutande", "Pigiama", "Magliette", "Pantaloni", "Felpa", "Giacca leggera", "Scarpe comode", "Ombrello"],
+        "Bambini": ["Pannolini", "Salviette", "Body", "Bavaglini", "Giochi", "Medicine bambini", "Termometro"],
+        "Igiene e Cura": ["Spazzolino", "Dentifricio", "Shampoo", "Bagnoschiuma", "Crema corpo", "Fazzoletti", "Medicine"],
+        "Accessori e Tech": ["Caricabatterie", "Caricabatterie orologio", "Marsupio"]
+    },
+    autunno: {
+        "Abbigliamento": ["Calze", "Mutande", "Pigiama", "Magliette", "Pantaloni", "Maglione", "Giacca pioggia", "Scarpe pesanti", "Sciarpa", "Ombrello"],
+        "Bambini": ["Pannolini", "Salviette", "Body lunghi e corti", "Bavaglini", "Giochi", "Medicine bambini", "Termometro"],
+        "Igiene e Cura": ["Spazzolino", "Dentifricio", "Shampoo", "Bagnoschiuma", "Crema corpo", "Fazzoletti", "Lavanaso", "Medicine"],
+        "Accessori e Tech": ["Caricabatterie", "Caricabatterie orologio", "Marsupio"]
+    },
+    mare: {
+        "Mare": ["Costumi", "Teli mare", "Creme solari", "Doposole", "Occhiali sole", "Cappelli", "Ciabatte", "Giochi spiaggia", "Ombrellone", "Borsa frigo", "Zaino spiaggia"]
+    },
+    montagna: {
+        "Montagna": ["Tuta da sci", "Giacca a vento", "Guanti", "Cappelli", "Passacollo", "Scarponcini", "Calzettoni", "Occhiali sole", "Crema protezione alta", "Burro cacao", "Slittino", "Zaino della montagna", "Borraccia termica"]
+    },
+    citta: {
+        "Città": ["Scarpe comode", "Zainetto", "Passeggino leggero", "Power bank", "Ombrello", "Biglietti e prenotazioni"]
+    },
+    cane: {
+        "Cane": ["Cibo Arya", "Guinzaglio", "Ciotole", "Sacchetti", "Libretto sanitario", "Antiparassitario", "Coperta Arya", "Giochi Arya", "Asciugamano Arya"]
+    },
+    aereo: {
+        "Viaggio": ["Documenti", "Carte d'imbarco", "Liquidi in bustina", "Cambio bimbi nel bagaglio a mano", "Cuffie", "Tablet con cartoni scaricati", "Snack", "Ciuccio per il decollo"]
+    },
+    auto: {
+        "Viaggio": ["Seggiolini", "Parasole finestrini", "Acqua", "Snack", "Sacchetti", "Salviette", "Giochi per l'auto", "Cuscino", "Telepass", "Cartoni scaricati"]
+    }
 };
 
 // Oggetti la cui quantità dipende dai giorni (nome esatto, maiuscole ignorate).
@@ -140,6 +220,8 @@ const scalableSet = new Set(scalableItems.map(s => s.toLowerCase()));
 const NEW_CAT_VALUE = "__nuova__";
 const CURRENT_KEY = 'tp_current';
 const ARCHIVE_KEY = 'tp_arch';
+const LISTS_KEY = 'tp_lists';   // liste base modificate dall'utente
+const HIDE_KEY = 'tp_hide';     // preferenza "nascondi già presi"
 
 let activeTrip = null;
 
@@ -155,6 +237,22 @@ function readJson(key, fallback) {
 function writeJson(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.log('Salvataggio non riuscito:', e); }
 }
+
+function sameName(a, b) { return a.trim().toLowerCase() === b.trim().toLowerCase(); }
+
+let toastTimer = null;
+function showToast(msg, actionLabel, actionFn, ms) {
+    const toast = document.getElementById('toast');
+    const btn = document.getElementById('toast-btn');
+    document.getElementById('toast-text').textContent = msg;
+    btn.style.display = actionLabel ? '' : 'none';
+    btn.textContent = actionLabel || '';
+    btn.onclick = () => { hideToast(); if (actionFn) actionFn(); };
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, ms || 3000);
+}
+function hideToast() { document.getElementById('toast').classList.remove('show'); }
 
 // Base64 compatibile con accenti ed emoji (UTF-8), sicuro negli URL
 function encodeTrip(obj) {
@@ -172,12 +270,27 @@ function decodeTrip(code) {
     return JSON.parse(new TextDecoder().decode(bytes));
 }
 
+// ---------- Liste base (modificabili) ----------
+function getList(key) {
+    const custom = readJson(LISTS_KEY, {});
+    return custom[key] || DEFAULT_LISTS[key] || {};
+}
+
+function setList(key, list) {
+    const custom = readJson(LISTS_KEY, {});
+    custom[key] = list;
+    writeJson(LISTS_KEY, custom);
+}
+
+function isListCustom(key) { return !!readJson(LISTS_KEY, {})[key]; }
+
 // Controlla e ripulisce un viaggio arrivato da link o archivio
 function sanitizeTrip(t) {
     if (!t || typeof t !== 'object' || !t.categories || typeof t.categories !== 'object') throw new Error('Formato non valido');
     const clean = {
         name: String(t.name || 'Mio Viaggio'),
-        season: presets[t.season] ? t.season : 'inverno',
+        season: SEASONS[t.season] ? t.season : 'inverno',
+        modules: Array.isArray(t.modules) ? t.modules.filter(m => MODULES[m]) : [],
         days: Math.max(1, parseInt(t.days) || 1),
         categories: {},
         collapsed: {}
@@ -186,13 +299,19 @@ function sanitizeTrip(t) {
         if (!Array.isArray(t.categories[cat])) continue;
         clean.categories[String(cat)] = t.categories[cat]
             .filter(i => i && i.name)
-            .map(i => ({ name: String(i.name), checked: !!i.checked }));
+            .map(i => {
+                const item = { name: String(i.name), checked: !!i.checked };
+                const q = parseInt(i.qty);
+                if (q > 0) item.qty = q;
+                return item;
+            });
         clean.collapsed[String(cat)] = !!(t.collapsed && t.collapsed[cat]);
     }
     // Tutte le categorie conosciute dal viaggio (anche quelle svuotate), nell'ordine originale
     const known = [
         ...(Array.isArray(t.allCats) ? t.allCats : []),
-        ...Object.keys(presets[clean.season]),
+        ...Object.keys(getList(clean.season)),
+        ...clean.modules.flatMap(m => Object.keys(getList(m))),
         ...Object.keys(clean.categories)
     ].map(String);
     clean.allCats = [...new Set(known)];
@@ -206,19 +325,55 @@ function sortCategories() {
     activeTrip.categories = sorted;
 }
 
+// ---------- Moduli (Mare, Montagna...) ----------
+function renderModuleChips() {
+    const box = document.getElementById('module-chips');
+    box.innerHTML = '';
+    for (const key in MODULES) {
+        const chip = document.createElement('label');
+        chip.className = 'chip';
+        chip.innerHTML = `<input type="checkbox" value="${key}">${MODULES[key]}`;
+        chip.querySelector('input').addEventListener('change', e => chip.classList.toggle('on', e.target.checked));
+        box.appendChild(chip);
+    }
+}
+
+function getSelectedModules() {
+    return [...document.querySelectorAll('#module-chips input:checked')].map(i => i.value);
+}
+
+function setSelectedModules(mods) {
+    document.querySelectorAll('#module-chips input').forEach(i => {
+        i.checked = mods.includes(i.value);
+        i.parentElement.classList.toggle('on', i.checked);
+    });
+}
+
 // ---------- Viaggio attivo ----------
 function createNewTrip() {
     if (activeTrip && hasProgress() && !confirm("Hai già una lista con oggetti spuntati. Crearne una nuova al suo posto?")) return;
     const season = document.getElementById('season').value;
+    const modules = getSelectedModules();
     const days = Math.max(1, parseInt(document.getElementById('days-count').value) || 1);
     const meta = document.getElementById('meta-name').value.trim() || "Mio Viaggio";
-    const template = presets[season];
 
-    activeTrip = { name: meta, season: season, days: days, categories: {}, collapsed: {}, allCats: Object.keys(template) };
-    for (const cat in template) {
-        activeTrip.categories[cat] = template[cat].map(item => ({ name: item, checked: false }));
-        activeTrip.collapsed[cat] = false;
-    }
+    const categories = {}, allCats = [], seen = new Set();
+    // Unisce stagione + moduli scelti, senza doppioni (stesso nome = stesso oggetto)
+    [season, ...modules].forEach(key => {
+        const list = getList(key);
+        for (const cat in list) {
+            if (!allCats.includes(cat)) allCats.push(cat);
+            list[cat].forEach(name => {
+                const k = name.trim().toLowerCase();
+                if (seen.has(k)) return;
+                seen.add(k);
+                (categories[cat] = categories[cat] || []).push({ name: name, checked: false });
+            });
+        }
+    });
+
+    activeTrip = { name: meta, season: season, modules: modules, days: days, categories: categories, collapsed: {}, allCats: allCats };
+    sortCategories();
     showApp();
     render();
 }
@@ -232,12 +387,29 @@ function setActiveTrip(trip) {
     document.getElementById('meta-name').value = activeTrip.name;
     document.getElementById('days-count').value = activeTrip.days;
     document.getElementById('season').value = activeTrip.season;
+    setSelectedModules(activeTrip.modules || []);
     showApp();
+    render();
+}
+
+function qtyOf(item) {
+    if (item.qty) return item.qty;
+    if (scalableSet.has(item.name.trim().toLowerCase())) return activeTrip.days;
+    return null;
+}
+
+function isHidingChecked() { return readJson(HIDE_KEY, false) === true; }
+
+function toggleHideChecked() {
+    writeJson(HIDE_KEY, !isHidingChecked());
     render();
 }
 
 function render() {
     if (!activeTrip) return;
+    const hide = isHidingChecked();
+    document.getElementById('hide-toggle').textContent = hide ? '👁️ Mostra tutto' : '🙈 Nascondi già presi';
+
     const container = document.getElementById('list-container');
     container.innerHTML = '';
     let total = 0, checked = 0;
@@ -248,6 +420,20 @@ function render() {
         const catPerc = items.length === 0 ? 0 : Math.round((catDone / items.length) * 100);
         total += items.length; checked += catDone;
 
+        // Teniamo l'indice originale anche quando nascondiamo i già presi
+        const visible = items.map((item, idx) => ({ item, idx })).filter(x => !(hide && x.item.checked));
+        const rows = visible.map(({ item, idx }) => {
+            const q = qtyOf(item);
+            const tag = q ? `<span class="qty-tag ${item.qty ? 'custom' : ''}" data-action="qty" data-idx="${idx}">x${q}</span>` : '';
+            return `
+                <div class="item-row ${item.checked ? 'checked' : ''}">
+                    <input type="checkbox" ${item.checked ? 'checked' : ''} data-action="toggle" data-idx="${idx}">
+                    ${tag}
+                    <span class="item-name">${escapeHtml(item.name)}</span>
+                    <button class="btn-del" data-action="delete" data-idx="${idx}" aria-label="Elimina">×</button>
+                </div>`;
+        }).join('');
+
         const catDiv = document.createElement('div');
         catDiv.className = 'cat-card';
         catDiv.dataset.cat = cat;
@@ -257,13 +443,7 @@ function render() {
                 <div class="cat-perc">${catPerc}%</div>
             </div>
             <div class="cat-content ${isCol ? 'hidden' : ''}">
-                ${items.map((item, idx) => `
-                    <div class="item-row ${item.checked ? 'checked' : ''}">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} data-action="toggle" data-idx="${idx}">
-                        <span>${getQty(item.name)} ${escapeHtml(item.name)}</span>
-                        <button class="btn-del" data-action="delete" data-idx="${idx}" aria-label="Elimina">×</button>
-                    </div>
-                `).join('')}
+                ${rows || '<div class="cat-done">✅ Tutto preso</div>'}
             </div>`;
         container.appendChild(catDiv);
     }
@@ -274,41 +454,76 @@ function render() {
     writeJson(CURRENT_KEY, activeTrip); // salvataggio automatico
 }
 
-// Un solo gestore per tutti i click della lista (niente nomi di categoria dentro onclick)
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('list-container').addEventListener('click', e => {
-        const el = e.target.closest('[data-action]');
-        if (!el) return;
-        const cat = el.closest('.cat-card').dataset.cat;
-        const idx = parseInt(el.dataset.idx);
-        if (el.dataset.action === 'collapse') {
-            activeTrip.collapsed[cat] = !activeTrip.collapsed[cat];
-        } else if (el.dataset.action === 'toggle') {
-            activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
-        } else if (el.dataset.action === 'delete') {
-            activeTrip.categories[cat].splice(idx, 1);
-            // Se la categoria è rimasta vuota, la tolgo dalla lista (resta disponibile nel menu "Aggiungi altro")
-            if (activeTrip.categories[cat].length === 0) {
-                delete activeTrip.categories[cat];
-                delete activeTrip.collapsed[cat];
-            }
-        }
-        render();
-    });
-    document.getElementById('new-item-name').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+// ---------- Azioni sulla lista (un solo gestore per tutti i click) ----------
+let lastDeleted = null;
+
+document.getElementById('list-container').addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const cat = el.closest('.cat-card').dataset.cat;
+    const idx = parseInt(el.dataset.idx);
+    const action = el.dataset.action;
+    if (action === 'collapse') {
+        activeTrip.collapsed[cat] = !activeTrip.collapsed[cat];
+    } else if (action === 'toggle') {
+        activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
+    } else if (action === 'qty') {
+        editQty(cat, idx);
+        return;
+    } else if (action === 'delete') {
+        const [item] = activeTrip.categories[cat].splice(idx, 1);
+        lastDeleted = { cat, idx, item };
+        // Se la categoria è rimasta vuota, la tolgo dalla lista (resta disponibile nel menu "Aggiungi altro")
+        if (activeTrip.categories[cat].length === 0) delete activeTrip.categories[cat];
+        showToast(`Eliminato "${item.name}"`, 'ANNULLA', undoDelete, 5000);
+    }
+    render();
 });
 
-function getQty(name) {
-    if (scalableSet.has(name.trim().toLowerCase())) return `<span class="qty-tag">x${activeTrip.days}</span>`;
-    return "";
+function undoDelete() {
+    if (!lastDeleted) return;
+    const { cat, idx, item } = lastDeleted;
+    if (!activeTrip.categories[cat]) {
+        activeTrip.categories[cat] = [];
+        sortCategories();
+    }
+    activeTrip.categories[cat].splice(Math.min(idx, activeTrip.categories[cat].length), 0, item);
+    lastDeleted = null;
+    render();
 }
 
-// Il menu "Aggiungi altro" mostra tutte le categorie del viaggio (anche quelle svuotate) + "Nuova categoria"
-function updateCategorySelect() {
-    const select = document.getElementById('new-item-cat');
+function editQty(cat, idx) {
+    const item = activeTrip.categories[cat][idx];
+    const auto = scalableSet.has(item.name.trim().toLowerCase());
+    const msg = `Quanti "${item.name}"?` + (auto ? `\n(Lascia vuoto per tornare automatico: ${activeTrip.days}, come i giorni)` : '\n(Lascia vuoto per togliere la quantità)');
+    const answer = prompt(msg, qtyOf(item) || '');
+    if (answer === null) return;
+    const n = parseInt(answer);
+    if (n > 0) item.qty = n; else delete item.qty;
+    render();
+}
+
+// Cambiare i giorni aggiorna subito le quantità automatiche della lista aperta
+document.getElementById('days-count').addEventListener('change', () => {
+    if (!activeTrip) return;
+    activeTrip.days = Math.max(1, parseInt(document.getElementById('days-count').value) || 1);
+    render();
+});
+
+document.getElementById('meta-name').addEventListener('change', () => {
+    if (!activeTrip) return;
+    activeTrip.name = document.getElementById('meta-name').value.trim() || activeTrip.name;
+    render();
+});
+
+document.getElementById('new-item-name').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+document.getElementById('base-new-name').addEventListener('keydown', e => { if (e.key === 'Enter') addBaseItem(); });
+
+// ---------- Aggiungi altro ----------
+// Il menu mostra tutte le categorie del viaggio (anche quelle svuotate) + "Nuova categoria"
+function fillCategorySelect(select, cats) {
     const previous = select.value;
     select.innerHTML = '';
-    const cats = activeTrip.allCats;
     cats.forEach(cat => {
         const opt = document.createElement('option');
         opt.value = cat; opt.textContent = cat;
@@ -321,14 +536,20 @@ function updateCategorySelect() {
     else if (cats.length) select.value = cats[0];
 }
 
-// Chiede il nome della nuova categoria e la aggiunge al menu. Restituisce il nome o null.
-function askNewCategory() {
+function updateCategorySelect() {
+    fillCategorySelect(document.getElementById('new-item-cat'), activeTrip.allCats);
+}
+
+// Chiede il nome di una nuova categoria; se esiste già (anche con maiuscole diverse) usa quella
+function askCategoryName(existingCats) {
     const name = (prompt("Nome della nuova categoria:") || '').trim();
     if (!name) return null;
-    // Se esiste già (anche con maiuscole diverse) usa quella
-    const existing = activeTrip.allCats.find(c => c.toLowerCase() === name.toLowerCase());
-    const cat = existing || name;
-    if (!existing) activeTrip.allCats.push(cat);
+    return existingCats.find(c => sameName(c, name)) || name;
+}
+
+function askNewCategory() {
+    const cat = askCategoryName(activeTrip.allCats);
+    if (cat && !activeTrip.allCats.includes(cat)) activeTrip.allCats.push(cat);
     return cat;
 }
 
@@ -343,6 +564,8 @@ function onCategoryChange() {
 
 function addItem() {
     const input = document.getElementById('new-item-name');
+    const qtyInput = document.getElementById('new-item-qty');
+    const pin = document.getElementById('pin-item');
     const name = input.value.trim();
     if (!name) return;
     let cat = document.getElementById('new-item-cat').value;
@@ -356,11 +579,32 @@ function addItem() {
         activeTrip.categories[cat] = [];
         sortCategories(); // la categoria ricompare al suo posto
     }
-    activeTrip.categories[cat].push({ name: name, checked: false });
+    const item = { name: name, checked: false };
+    const q = parseInt(qtyInput.value);
+    if (q > 0) item.qty = q;
+    activeTrip.categories[cat].push(item);
     activeTrip.collapsed[cat] = false; // mostra subito l'oggetto aggiunto
+
+    if (pin.checked) {
+        const key = pinToBaseList(name, cat);
+        showToast(`📌 "${name}" salvato anche nella lista ${LIST_LABELS[key]}`);
+        pin.checked = false;
+    }
     input.value = '';
+    qtyInput.value = '';
     render();
     document.getElementById('new-item-cat').value = cat;
+}
+
+// Salva l'oggetto nella lista base giusta: il modulo che ha quella categoria, altrimenti la stagione
+function pinToBaseList(name, cat) {
+    const key = (activeTrip.modules || []).find(m => getList(m)[cat]) || activeTrip.season;
+    const list = JSON.parse(JSON.stringify(getList(key)));
+    list[cat] = list[cat] || [];
+    if (!list[cat].some(n => sameName(n, name))) list[cat].push(name);
+    setList(key, list);
+    renderBaseList();
+    return key;
 }
 
 // ---------- Archivio ----------
@@ -373,15 +617,32 @@ function saveCurrentTripToArchive() {
     archive[saveName] = activeTrip;
     writeJson(ARCHIVE_KEY, archive);
     updateArchiveList();
+    showToast('💾 Viaggio salvato');
+}
+
+function getArchivedTrip() {
+    const name = document.getElementById('archive-select').value;
+    const archive = readJson(ARCHIVE_KEY, {});
+    if (!name || !archive[name]) return null;
+    try { return sanitizeTrip(JSON.parse(JSON.stringify(archive[name]))); }
+    catch (e) { alert("Questo viaggio salvato è danneggiato."); return null; }
 }
 
 function loadTripFromArchive() {
-    const name = document.getElementById('archive-select').value;
-    const archive = readJson(ARCHIVE_KEY, {});
-    if (name && archive[name]) {
-        try { setActiveTrip(sanitizeTrip(JSON.parse(JSON.stringify(archive[name])))); }
-        catch (e) { alert("Questo viaggio salvato è danneggiato."); }
-    }
+    const trip = getArchivedTrip();
+    if (trip) setActiveTrip(trip);
+}
+
+function duplicateFromArchive() {
+    const trip = getArchivedTrip();
+    if (!trip) return;
+    const newName = prompt("Nome del nuovo viaggio:", trip.name + " (nuovo)");
+    if (newName === null) return;
+    if (activeTrip && hasProgress() && !confirm("La lista aperta ora verrà sostituita. Continuare?")) return;
+    trip.name = newName.trim() || trip.name;
+    for (const cat in trip.categories) trip.categories[cat].forEach(i => i.checked = false);
+    setActiveTrip(trip);
+    showToast('Lista duplicata, tutte le spunte azzerate');
 }
 
 function deleteFromArchive() {
@@ -402,6 +663,82 @@ function updateArchiveList() {
         const opt = document.createElement('option');
         opt.value = name; opt.textContent = name; select.appendChild(opt);
     }
+}
+
+// ---------- Editor liste base ----------
+function fillBaseListSelect() {
+    const select = document.getElementById('base-list-select');
+    select.innerHTML = `
+        <optgroup label="Stagioni">${Object.keys(SEASONS).map(k => `<option value="${k}">${SEASONS[k]}</option>`).join('')}</optgroup>
+        <optgroup label="Aggiungi anche">${Object.keys(MODULES).map(k => `<option value="${k}">${MODULES[k]}</option>`).join('')}</optgroup>`;
+}
+
+function renderBaseList() {
+    const key = document.getElementById('base-list-select').value;
+    const list = getList(key);
+    const view = document.getElementById('base-list-view');
+    view.innerHTML = (isListCustom(key) ? '<div class="hint">Questa lista è stata modificata <span class="badge">personalizzata</span></div>' : '') +
+        Object.keys(list).map(cat => `
+            <div class="base-cat">${escapeHtml(cat)}</div>
+            ${list[cat].map((name, idx) => `
+                <div class="base-item"><span>${escapeHtml(name)}</span>
+                    <button class="btn-del" data-cat="${escapeHtml(cat)}" data-idx="${idx}" aria-label="Elimina">×</button></div>`).join('')}
+        `).join('');
+    fillCategorySelect(document.getElementById('base-new-cat'), Object.keys(list));
+    document.getElementById('base-reset').style.display = isListCustom(key) ? '' : 'none';
+}
+
+document.getElementById('base-list-view').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-idx]');
+    if (!btn) return;
+    const key = document.getElementById('base-list-select').value;
+    const list = JSON.parse(JSON.stringify(getList(key)));
+    const cat = btn.dataset.cat;
+    list[cat].splice(parseInt(btn.dataset.idx), 1);
+    if (list[cat].length === 0) delete list[cat];
+    setList(key, list);
+    renderBaseList();
+});
+
+document.getElementById('base-new-cat').addEventListener('change', e => {
+    if (e.target.value !== NEW_CAT_VALUE) return;
+    const key = document.getElementById('base-list-select').value;
+    const cats = Object.keys(getList(key));
+    const cat = askCategoryName(cats);
+    if (cat && !cats.includes(cat)) {
+        const opt = document.createElement('option');
+        opt.value = cat; opt.textContent = cat;
+        e.target.insertBefore(opt, e.target.lastChild);
+    }
+    e.target.value = cat || (cats[0] || NEW_CAT_VALUE);
+});
+
+function addBaseItem() {
+    const input = document.getElementById('base-new-name');
+    const name = input.value.trim();
+    if (!name) return;
+    const key = document.getElementById('base-list-select').value;
+    const list = JSON.parse(JSON.stringify(getList(key)));
+    let cat = document.getElementById('base-new-cat').value;
+    if (!cat || cat === NEW_CAT_VALUE) {
+        cat = askCategoryName(Object.keys(list));
+        if (!cat) return;
+    }
+    list[cat] = list[cat] || [];
+    if (!list[cat].some(n => sameName(n, name))) list[cat].push(name);
+    setList(key, list);
+    input.value = '';
+    renderBaseList();
+    document.getElementById('base-new-cat').value = cat;
+}
+
+function resetBaseList() {
+    const key = document.getElementById('base-list-select').value;
+    if (!confirm(`Ripristinare la lista ${LIST_LABELS[key]} com'era all'inizio? Le tue modifiche a questa lista andranno perse.`)) return;
+    const custom = readJson(LISTS_KEY, {});
+    delete custom[key];
+    writeJson(LISTS_KEY, custom);
+    renderBaseList();
 }
 
 // ---------- Condivisione ----------
@@ -433,7 +770,7 @@ function caricaDaLink() {
     try {
         trip = sanitizeTrip(decodeTrip(code));
     } catch (e) {
-        try { trip = sanitizeTrip(JSON.parse(atob(code))); } // link creati con la versione precedente
+        try { trip = sanitizeTrip(JSON.parse(atob(code))); } // link creati con la prima versione
         catch (e2) { alert("Il link non è valido."); return false; }
     }
     const current = readJson(CURRENT_KEY, null);
@@ -449,6 +786,11 @@ function showApp() {
     document.getElementById('progress-area').style.display = 'block';
     document.getElementById('add-item-area').style.display = 'block';
 }
+
+// ---------- Avvio ----------
+renderModuleChips();
+fillBaseListSelect();
+renderBaseList();
 
 window.onload = function() {
     updateArchiveList();

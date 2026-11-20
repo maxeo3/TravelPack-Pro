@@ -1,5 +1,5 @@
 // Cambia la versione quando aggiorni l'app, così i telefoni scaricano i file nuovi
-const CACHE = 'travelpack-v2';
+const CACHE = 'travelpack-v3';
 const FILES = ['./', 'index.html', 'manifest.json', 'icon.png', 'icon.svg'];
 
 self.addEventListener('install', (e) => {
