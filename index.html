@@ -273,6 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
             activeTrip.categories[cat][idx].checked = !activeTrip.categories[cat][idx].checked;
         } else if (el.dataset.action === 'delete') {
             activeTrip.categories[cat].splice(idx, 1);
+            // Se la categoria è rimasta vuota, la tolgo dalla lista
+            if (activeTrip.categories[cat].length === 0) {
+                delete activeTrip.categories[cat];
+                delete activeTrip.collapsed[cat];
+            }
         }
         render();
     });
